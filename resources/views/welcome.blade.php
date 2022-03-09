@@ -26,6 +26,7 @@
         </style>
     </head>
     <body>
+        <h3>Top Cryptos</h3>
         <table class="table">
             <thead>
               <tr>
@@ -35,7 +36,7 @@
               </tr>
             </thead>
             <tbody>
-                @foreach ($cryptos as $key => $crypto)
+                @foreach ($topCryptos as $key => $crypto)
                     <tr>
                     <td>{{ $crypto->getName() }}</td>
                     <td>{{ $crypto->getPrice() }}</td>
@@ -43,6 +44,21 @@
                   </tr>
                 @endforeach
             </tbody>
-          </table>
+        </table>
+        <h3>Trending Cryptos</h3>
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Name</th>
+              </tr>
+            </thead>
+            <tbody>
+                @foreach ($trendingCryptos as $key => $crypto)
+                    <tr>
+                    <td>{{ $crypto->getName() }}</td>
+                  </tr>
+                @endforeach
+            </tbody>
+        </table>
     </body>
 </html>

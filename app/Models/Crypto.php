@@ -6,12 +6,12 @@ class Crypto
 {
     private string $name;
 
-    private string $price;
+    private ?string $price;
 
-    private string $marketCap;
+    private ?string $marketCap;
 
 
-    public function __construct(string $name, string $price, string $marketCap)
+    public function __construct(string $name, ?string $price = null, ?string $marketCap = null)
     {
         $this->name = $name;
         $this->price = $price;
@@ -23,12 +23,12 @@ class Crypto
         return $this->name;
     }
 
-    public function getPrice(): string
+    public function getPrice(): ?string
     {
         return $this->price;
     }
 
-    public function getMarketCap(): string
+    public function getMarketCap(): ?string
     {
         return $this->marketCap;
     }

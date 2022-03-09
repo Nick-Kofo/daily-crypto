@@ -18,4 +18,4 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
-Route::get('/', [WebController::class, 'getCryptos']);
+Route::get('/', [WebController::class, 'index']);

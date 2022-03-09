@@ -9,11 +9,21 @@ use Illuminate\Support\Facades\Http;
 
 class WebController extends BaseController
 {
-    public function getCryptos()
+    public function index()
     {
-        $response = Http::withHeaders(
-            ['X-CMC_PRO_API_KEY' => env('COINMARKETCAP_API_KEY')]
-        )->get(
+        return View(
+            'welcome',
+            [
+                'topCryptos' => $this->getTopCryptos(),
+                'trendingCryptos' => $this->getTrendingCryptos()
+            ]
+        );
+    }
+
+    private function getTopCryptos(): array
+    {
+        $response = Http::withHeaders(['X-CMC_PRO_API_KEY' => env('COINMARKETCAP_API_KEY')])
+        ->get(
             'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest',
             ['start' => 1, 'limit' => 20, 'convert' => 'EUR']
         );
@@ -33,11 +43,29 @@ class WebController extends BaseController
             $cryptos[] = $crypto;
         }
 
-        return View(
-            'welcome',
-            [
-                'cryptos' => $cryptos
-            ]
+        return $cryptos;
+    }
+
+    private function getTrendingCryptos(): array
+    {
+        $response = Http::get(
+            'https://api.coingecko.com/api/v3/search/trending',
+            ['start' => 1, 'limit' => 20, 'convert' => 'EUR']
         );
+
+        if (!isset($response->json()['coins'])) {
+            throw new Exception('Api did not returned coins');
+        }
+
+        $cryptos = [];
+        if ($response->json())
+        foreach ($response->json()['coins'] as $cryptocurrency) {
+            $crypto = new Crypto(
+                $cryptocurrency['item']['name'] ?? ''
+            );
+            $cryptos[] = $crypto;
+        }
+
+        return $cryptos;
     }
 }
