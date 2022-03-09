@@ -15,7 +15,8 @@ class WebController extends BaseController
             'welcome',
             [
                 'topCryptos' => $this->getTopCryptos(),
-                'trendingCryptos' => $this->getTrendingCryptos()
+                'trendingCryptos' => $this->getTrendingCryptos(),
+                'popularTweets' => $this->getPopularTweets()
             ]
         );
     }
@@ -48,10 +49,33 @@ class WebController extends BaseController
 
     private function getTrendingCryptos(): array
     {
-        $response = Http::get(
-            'https://api.coingecko.com/api/v3/search/trending',
-            ['start' => 1, 'limit' => 20, 'convert' => 'EUR']
+        $response = Http::get('https://api.coingecko.com/api/v3/search/trending');
+
+        if (!isset($response->json()['coins'])) {
+            throw new Exception('Api did not returned coins');
+        }
+
+        $cryptos = [];
+        if ($response->json())
+        foreach ($response->json()['coins'] as $cryptocurrency) {
+            $crypto = new Crypto(
+                $cryptocurrency['item']['name'] ?? ''
+            );
+            $cryptos[] = $crypto;
+        }
+
+        return $cryptos;
+    }
+
+    private function getPopularTweets(): array
+    {
+        $response = Http::withHeaders(['Authorization' => sprintf('Bearer %s', env('TWEETER_BEARER_TOKEN'))])
+        ->get(
+            'https://api.twitter.com/2/tweets/search/recent',
+            ['query' => '#crypto']
         );
+
+        echo '<pre>'; print_r(json_encode($response->json()['data'])); die;
 
         if (!isset($response->json()['coins'])) {
             throw new Exception('Api did not returned coins');
